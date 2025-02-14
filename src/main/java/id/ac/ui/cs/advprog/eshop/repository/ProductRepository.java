@@ -23,13 +23,34 @@ public class ProductRepository {
         return productData.iterator();
     }
 
+    // Find a product by its productId.
+    public Product findById(String productId) {
+        for (Product product : productData) {
+            if (product.getProductId() != null && product.getProductId().equals(productId)) {
+                return product;
+            }
+        }
+        return null;  // or throw an exception if preferred
+    }
+
+    // Update a product. Returns true if update was successful.
+    public boolean update(Product updatedProduct) {
+        for (int i = 0; i < productData.size(); i++) {
+            Product product = productData.get(i);
+            if (product.getProductId() != null && product.getProductId().equals(updatedProduct.getProductId())) {
+                productData.set(i, updatedProduct);
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Delete a product by its productId.
     // Returns true if the product was found and removed; otherwise false.
     public boolean delete(String productId) {
         Iterator<Product> iterator = productData.iterator();
         while (iterator.hasNext()) {
             Product product = iterator.next();
-            // Using equals() for string comparison
             if (product.getProductId() != null && product.getProductId().equals(productId)) {
                 iterator.remove();
                 return true;
