@@ -20,7 +20,7 @@ public class ProductController {
     public String createProductPage(Model model) {
         Product product = new Product();
         model.addAttribute("product", product);
-        return "createProduct";
+        return "createProduct";  // Ensure that the view name matches your template file name.
     }
 
     @PostMapping("/create")
@@ -33,6 +33,14 @@ public class ProductController {
     public String productListPage(Model model) {
         List<Product> allProducts = service.findAll();
         model.addAttribute("products", allProducts);
-        return "productList";
+        return "productList";  // Ensure that the view name matches your template file name
+    }
+
+    // Endpoint to delete product by id
+    // Using POST because DeleteMapping is not supported by HTML
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable("id") String productId, Model model) {
+        boolean deleted = service.delete(productId);
+        return "redirect:/product/list";
     }
 }
