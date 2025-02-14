@@ -18,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
-        // If no productId is provided, generate one using UUID.
+        // Generate a unique productId if not provided.
         if (product.getProductId() == null || product.getProductId().isEmpty()) {
             product.setProductId(UUID.randomUUID().toString());
         }
@@ -29,9 +29,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findAll() {
         Iterator<Product> productIterator = productRepository.findAll();
-        List<Product> allProduct = new ArrayList<>();
-        productIterator.forEachRemaining(allProduct::add);
-        return allProduct;
+        List<Product> allProducts = new ArrayList<>();
+        productIterator.forEachRemaining(allProducts::add);
+        return allProducts;
+    }
+
+    @Override
+    public Product findById(String productId) {
+        return productRepository.findById(productId);
+    }
+
+    @Override
+    public boolean update(Product product) {
+        // Validate input or perform additional security checks if needed.
+        return productRepository.update(product);
     }
 
     @Override
