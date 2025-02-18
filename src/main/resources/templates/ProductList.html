@@ -29,7 +29,7 @@
                 <td>
                     <div class="d-inline-block">
                         <!-- Edit button -->
-                        <form th:action="@{'/product/edit/' + ${product.productId}}" method="post" class="d-inline">
+                        <form th:action="@{'/product/edit/' + ${product.productId}}" method="get" class="d-inline">
                             <button type="submit" class="btn btn-sm text-white" style="background-color: #ff6b81;">Edit</button>
                         </form>
                         <!-- Form for deleting a product -->
