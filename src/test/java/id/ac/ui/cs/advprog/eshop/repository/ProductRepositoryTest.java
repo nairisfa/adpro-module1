@@ -148,7 +148,7 @@ class ProductRepositoryTest {
         productRepository.delete(product.getProductId());
 
         Iterator<Product> products = productRepository.findAll();
-        assertTrue(products.hasNext());
+        assertFalse(products.hasNext());
     }
 
     @Test
@@ -177,16 +177,24 @@ class ProductRepositoryTest {
         product2.setProductQuantity(200);
         productRepository.create(product2);
 
+        Product product3 = new Product();
+        product3.setProductId("123e4567-e89b-12d3-a456-556642440002");
+        product3.setProductName("Product 3");
+        product3.setProductQuantity(300);
+        productRepository.create(product3);
+
+
         productRepository.delete(product1.getProductId());
 
         Iterator<Product> products = productRepository.findAll();
         assertTrue(products.hasNext());
 
-        Product savedProduct = products.next();
-        assertEquals(product1.getProductId(), savedProduct.getProductId());
+        Product remainingProduct = products.next();
+        assertEquals(product2.getProductId(), remainingProduct.getProductId());
 
-        savedProduct = products.next();
-        assertEquals(product2.getProductId(), savedProduct.getProductId());
+        Product remainingProduct2 = products.next();
+        assertEquals(product3.getProductId(), remainingProduct2.getProductId());
+
 
         assertFalse(products.hasNext());
     }
