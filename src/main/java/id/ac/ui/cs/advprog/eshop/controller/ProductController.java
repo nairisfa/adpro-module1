@@ -36,7 +36,6 @@ public class ProductController {
         return "productList";  // Name of the template for listing products.
     }
 
-    // GET endpoint to load the edit page for a specific product
     @GetMapping("/edit/{id}")
     public String editProductPage(@PathVariable("id") String productId, Model model) {
         Product product = service.findById(productId);
