@@ -81,7 +81,10 @@ class ProductRepositoryTest {
 
         product.setProductName("Product 1 update");
         product.setProductQuantity(600);
-        productRepository.update(product);
+        // Attempt to update the product.
+        boolean updated = productRepository.update(product);
+        // Verify that update returned true.
+        assertTrue(updated);
 
         Iterator<Product> products = productRepository.findAll();
         assertTrue(products.hasNext());
@@ -100,7 +103,10 @@ class ProductRepositoryTest {
         product.setProductId("123e4567-e89b-12d3-a456-556642440000");
         product.setProductName("Product 1");
         product.setProductQuantity(100);
-        productRepository.update(product);
+        // Attempt to update a non-existent product.
+        boolean updated = productRepository.update(product);
+        // Expect update to return false.
+        assertFalse(updated);
 
         Iterator<Product> products = productRepository.findAll();
         assertFalse(products.hasNext());
@@ -122,7 +128,8 @@ class ProductRepositoryTest {
 
         product1.setProductQuantity(700);
         product1.setProductName("Product 1 update");
-        productRepository.update(product1);
+        boolean updated = productRepository.update(product1);
+        assertTrue(updated);
 
         Iterator<Product> products = productRepository.findAll();
         assertTrue(products.hasNext());
@@ -145,7 +152,10 @@ class ProductRepositoryTest {
         product.setProductQuantity(100);
         productRepository.create(product);
 
-        productRepository.delete(product.getProductId());
+        // Attempt to delete the product by its ID.
+        boolean deleted = productRepository.delete(product.getProductId());
+        // Verify deletion returns true.
+        assertTrue(deleted);
 
         Iterator<Product> products = productRepository.findAll();
         assertFalse(products.hasNext());
@@ -157,7 +167,11 @@ class ProductRepositoryTest {
         product.setProductId("123e4567-e89b-12d3-a456-556642440000");
         product.setProductName("Product 1");
         product.setProductQuantity(100);
-        productRepository.delete(product.getProductId());
+
+        // Attempt to delete a non-existent product.
+        boolean deleted = productRepository.delete(product.getProductId());
+        // Verify that deletion returns false.
+        assertFalse(deleted);
 
         Iterator<Product> products = productRepository.findAll();
         assertFalse(products.hasNext());
@@ -183,7 +197,9 @@ class ProductRepositoryTest {
         product3.setProductQuantity(300);
         productRepository.create(product3);
 
-        productRepository.delete(product1.getProductId());
+        // Delete the first product.
+        boolean deleted = productRepository.delete(product1.getProductId());
+        assertTrue(deleted);
 
         Iterator<Product> products = productRepository.findAll();
         assertTrue(products.hasNext());
@@ -208,6 +224,17 @@ class ProductRepositoryTest {
         Product savedProduct = productRepository.findById("123e4567-e89b-12d3-a456-556642440000");
 
         assertEquals(product, savedProduct);
+    }
+
+    @Test
+    void testFindByIdIfEmpty() {
+        Product product = new Product();
+        product.setProductId("123e4567-e89b-12d3-a456-556642440000");
+        product.setProductName("Product 1");
+        product.setProductQuantity(100);
+
+        Product savedProduct = productRepository.findById("123e4567-e89b-12d3-a456-556642440000");
+        assertNull(savedProduct, "product is null because it does not exist");
     }
 
     //edit
@@ -241,4 +268,92 @@ class ProductRepositoryTest {
         Product nonExistentProduct = productRepository.findById("123e4567-e89b-12d3-a456-556642440000");
         assertNull(nonExistentProduct, "Product not found because none is added");
     }
+
+    @Test
+    void testFindByIdWithNullProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId(null);
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        // Attempt to find a product with a null ID; since the product's ID is null,
+        // the condition in findById() won't match and it should return null.
+        Product found = productRepository.findById(null);
+        assertNull(found, "Should return null when searching for a product with null productId");
+    }
+
+    @Test
+    void testFindByIdWithWrongProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId("");
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        Product found = productRepository.findById("1");
+        assertNull(found, "Should return null when searching for a product with null productId");
+    }
+
+    @Test
+    void testUpdateWithNullProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId(null);
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        // Attempt to update the product; update() should not find a matching product (because the ID is null)
+        // and therefore return false.
+        boolean updated = productRepository.update(product);
+        assertFalse(updated, "Update should fail when productId is null");
+    }
+
+    @Test
+    void testUpdateWithWrongProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId("");
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        Product decoy = new Product();
+        decoy.setProductId("1");
+
+        boolean updated = productRepository.update(decoy);
+        assertFalse(updated, "Update should fail when productId is null");
+    }
+
+
+    @Test
+    void testDeleteWithNullProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        // Attempt to delete using null; the repository should not match the product with null ID,
+        // so delete() should return false.
+        boolean deleted = productRepository.delete("");
+        assertFalse(deleted, "Delete should fail when productId is null");
+    }
+
+    @Test
+    void testDeleteWithWrongProductId() {
+        // Create a product with a null productId
+        Product product = new Product();
+        product.setProductId("");
+        product.setProductName("Null Product");
+        product.setProductQuantity(50);
+        productRepository.create(product);
+
+        boolean deleted = productRepository.delete("2");
+        assertFalse(deleted, "Delete should fail when productId is null");
+    }
 }
+
