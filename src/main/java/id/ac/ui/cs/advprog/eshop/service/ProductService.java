@@ -14,3 +14,4 @@ public interface ProductService {
     // Existing delete method
     boolean delete(String productId);
 }
+
